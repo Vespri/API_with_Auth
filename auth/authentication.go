@@ -1,58 +1,16 @@
 package auth
 
-import (
-	"net/http"
-	"strings"
+import "golang.org/x/crypto/bcrypt"
 
-	"final_project/helper"
-	"final_project/user"
-
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
-)
-
-func Authentication(userService user.Service) gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		authService := NewService()
-		authHeader := c.GetHeader("Authorization")
-
-		if !strings.Contains(authHeader, "Bearer") {
-			response := helper.ApiResponse("Unauthorized/token baerer null", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		tokenString := ""
-		arrayToken := strings.Split(authHeader, " ")
-		if len(arrayToken) == 2 {
-			tokenString = arrayToken[1]
-		}
-
-		token, err := authService.ValidateToken(tokenString)
-		if err != nil {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		claim, ok := token.Claims.(jwt.MapClaims)
-
-		if !ok || !token.Valid {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		userID := int(claim["user_id"].(float64))
-
-		user, err := userService.GetUserByID(userID)
-		if err != nil {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		c.Set("currentUser", user)
+func HashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
 	}
+	return string(hash), err
+}
+
+func ComparePassword(dbPassword, userPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(userPassword))
+	return err == nil
 }

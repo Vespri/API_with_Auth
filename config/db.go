@@ -1,7 +1,7 @@
 package config
 
 import (
-	"final_project/user"
+	"final_project/entity"
 	"fmt"
 	"log"
 
@@ -21,7 +21,7 @@ func StartDB() *gorm.DB {
 	connectDB := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=disable", hostDB, portDB, userDB, passDB, nameDB)
 	db, err := gorm.Open(postgres.Open(connectDB), &gorm.Config{})
 
-	db.Debug().AutoMigrate(&user.User{})
+	db.Debug().AutoMigrate(&entity.User{}, &entity.Photo{})
 
 	if err != nil {
 		log.Fatal(err.Error())

@@ -1,40 +1,29 @@
 package helper
 
 import (
-	"github.com/go-playground/validator/v10"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-type Response struct {
-	Meta Meta        `json:"meta"`
-	Data interface{} `json:"data"`
+func BadRequestResponse(ctx *gin.Context, payload interface{}) {
+	WriteJsonResponse(ctx, http.StatusBadRequest, gin.H{
+		"message": payload,
+	})
 }
 
-type Meta struct {
-	Message string `json:"message"`
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
+func InternalServerJsonResponse(ctx *gin.Context, payload interface{}) {
+	WriteJsonResponse(ctx, http.StatusInternalServerError, gin.H{
+		"message": payload,
+	})
 }
 
-func ApiResponse(message string, code int, status string, data interface{}) Response {
-	meta := Meta{
-		Message: message,
-		Code:    code,
-		Status:  status,
-	}
-
-	jsonResponse := Response{
-		Meta: meta,
-		Data: data,
-	}
-
-	return jsonResponse
+func NotFoundResponse(ctx *gin.Context, payload interface{}) {
+	WriteJsonResponse(ctx, http.StatusNotFound, gin.H{
+		"message": payload,
+	})
 }
 
-func FormatValidationError(err error) []string {
-	var errors []string
-	validationErrors := err.(validator.ValidationErrors)
-	for _, e := range validationErrors {
-		errors = append(errors, e.Error())
-	}
-	return errors
+func WriteJsonResponse(ctx *gin.Context, status int, payload interface{}) {
+	ctx.JSON(status, payload)
 }
