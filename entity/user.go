@@ -14,9 +14,9 @@ type User struct {
 	Password string `gorm:"not null" json:"password,omitempty" form:"password" valid:"required~Your password is required,minstringlength(6)~Password has to have a minimum length of 6 characters"`
 	Age      int    `gorm:"not null" json:"age,omitempty" form:"age" valid:"required~Your age is required,numeric~Fill age with number,range(8|99)~minimum 8 years old"`
 	GormModel
-	Photos []Photo `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"photos,omitempty"`
-	// Comments []Comment `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"comments,omitempty"`
-	// Socials  []Social  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"socials,omitempty"`
+	Photos   []Photo   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"photos,omitempty"`
+	Comments []Comment `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"comments,omitempty"`
+	Socials  []Social  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"socials,omitempty"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) (err error) {

@@ -14,8 +14,8 @@ func StartApp() *gin.Engine {
 	router := gin.Default()
 	user := controller.NewUserController(db)
 	photo := controller.NewPhotoController(db)
-	// social := controller.NewSocialController(db)
-	// comment := controller.NewCommentController(db)
+	social := controller.NewSocialController(db)
+	comment := controller.NewCommentController(db)
 
 	userGroup := router.Group("/users")
 	{
@@ -33,21 +33,21 @@ func StartApp() *gin.Engine {
 		photoGroup.DELETE("/:photoId", middleware.Auth(), photo.DeletePhoto)
 	}
 
-	// socialGroup := router.Group("/socials")
-	// {
-	// 	socialGroup.GET("/", middleware.Auth(), social.FindAllSocial)
-	// 	socialGroup.POST("/", middleware.Auth(), social.CreateSocial)
-	// 	socialGroup.PUT("/:socialMediaId", middleware.Auth(), social.UpdateSocial)
-	// 	socialGroup.DELETE("/:socialMediaId", middleware.Auth(), social.DeleteSocial)
-	// }
+	socialGroup := router.Group("/socials")
+	{
+		socialGroup.GET("/", middleware.Auth(), social.FindAllSocial)
+		socialGroup.POST("/", middleware.Auth(), social.CreateSocial)
+		socialGroup.PUT("/:socialMediaId", middleware.Auth(), social.UpdateSocial)
+		socialGroup.DELETE("/:socialMediaId", middleware.Auth(), social.DeleteSocial)
+	}
 
-	// commentGroup := router.Group("/comments")
-	// {
-	// 	commentGroup.GET("/", middleware.Auth(), comment.FindAllComment)
-	// 	commentGroup.POST("/", middleware.Auth(), comment.CreateComment)
-	// 	commentGroup.PUT("/:commentId", middleware.Auth(), comment.UpdateComment)
-	// 	commentGroup.DELETE("/:commentId", middleware.Auth(), comment.DeleteComment)
-	// }
+	commentGroup := router.Group("/comments")
+	{
+		commentGroup.GET("/", middleware.Auth(), comment.FindAllComment)
+		commentGroup.POST("/", middleware.Auth(), comment.CreateComment)
+		commentGroup.PUT("/:commentId", middleware.Auth(), comment.UpdateComment)
+		commentGroup.DELETE("/:commentId", middleware.Auth(), comment.DeleteComment)
+	}
 
 	return router
 }
